@@ -8,7 +8,11 @@ interface AddUserPresenterContract{
 
     fun insert(user: User)
 
+    fun findCEP(cep: String)
+
     fun insertUser(user: User, context: Context)
 
-    fun findCEP(cep: String)
+    fun deleteUser(user: User, context: Context)
+
+    fun updateUser(user: User, context: Context)
 }

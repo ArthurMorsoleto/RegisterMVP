@@ -10,10 +10,10 @@ import com.arthurbatista.registermvp.R
 import com.arthurbatista.registermvp.model.user.User
 import kotlinx.android.synthetic.main.layout_user_adapter.view.*
 
-class UserAdapter(
-
-    var userList: List<User>? = ArrayList<User>(),
-    private val context: Context) : Adapter<UserAdapter.MyViewHolder>() {
+class UserAdapter(var userList: List<User>? = ArrayList(),
+                  private val context: Context,
+                  val clickListener: (User) -> Unit
+) : Adapter<UserAdapter.MyViewHolder>() {
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, p1: Int): MyViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.layout_user_adapter, viewGroup, false)
@@ -26,18 +26,20 @@ class UserAdapter(
 
     override fun onBindViewHolder(viewHolder: MyViewHolder, position: Int) {
         val user = userList?.get(position)
-        viewHolder?.let {
+        viewHolder.let {
             if (user != null) {
-                it.bindView(user)
+                it.bindView(user, clickListener)
             }
         }
     }
 
     class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        fun bindView(user: User){
+        fun bindView(user: User, clickListener: (User) -> Unit){
             val txtName = itemView.txtName
             val txtCep = itemView.txtCep
+
+            itemView.setOnClickListener { clickListener(user) }
 
             txtName.text = user.name
             txtCep.text = user.cep

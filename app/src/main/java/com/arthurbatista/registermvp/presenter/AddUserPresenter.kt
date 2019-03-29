@@ -68,6 +68,22 @@ open class AddUserPresenter : AddUserPresenterContract{
         }
     }
 
+    override fun deleteUser(user: User, context: Context) {
+        doAsync {
+            userDatabase = UserDatabase.getInstance(context)
+            userDao = userDatabase?.getUserDao()
+            userDao!!.delete(user)
+        }
+    }
+
+    override fun updateUser(user: User, context: Context) {
+        doAsync {
+            userDatabase = UserDatabase.getInstance(context)
+            userDao = userDatabase?.getUserDao()
+            userDao!!.update(user)
+        }
+    }
+
     interface View
 
 }

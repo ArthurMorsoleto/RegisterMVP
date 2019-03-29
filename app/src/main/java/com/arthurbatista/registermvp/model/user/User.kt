@@ -3,9 +3,10 @@ package com.arthurbatista.registermvp.model.user
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
+import java.io.Serializable
 
 @Entity(tableName = "user_table")
-data class User(
+data class User (
 
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0,
@@ -27,4 +28,4 @@ data class User(
 
     @ColumnInfo(name = "uf")
     var uf: String = ""
-)
+) : Serializable

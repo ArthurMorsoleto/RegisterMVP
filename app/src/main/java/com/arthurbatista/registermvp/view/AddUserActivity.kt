@@ -3,12 +3,11 @@ package com.arthurbatista.registermvp.view
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import com.arthurbatista.registermvp.R
-import com.arthurbatista.registermvp.model.cep.CEP
 import com.arthurbatista.registermvp.model.user.User
 import com.arthurbatista.registermvp.presenter.AddUserPresenter
 import kotlinx.android.synthetic.main.activity_add_user.*
@@ -20,9 +19,28 @@ class AddUserActivity : AppCompatActivity(), AddUserPresenter.View {
 
     private val presenter = AddUserPresenter()
 
+    var isUpdate: Boolean = false
+
+    var userToUpdateDelete: User? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_user)
+
+        btnDelete.isClickable = false
+
+        val intentFromMain = getIntent()
+
+        if(intentFromMain.hasExtra("USER")){
+
+            isUpdate = true
+
+            btnDelete.isClickable = true
+
+            userToUpdateDelete = intentFromMain.extras.get("USER") as User
+            editName.setText(userToUpdateDelete!!.name)
+            editCep.setText(userToUpdateDelete!!.cep)
+        }
 
         editCep.addTextChangedListener(MaskEditUtil.mask(editCep, MaskEditUtil.FORMAT_CEP))
 
@@ -32,24 +50,49 @@ class AddUserActivity : AppCompatActivity(), AddUserPresenter.View {
             val userCep = editCep.text.toString()
 
             if(!userName.equals("") || !userCep.equals("")){
-                val user = User(0, userName, userCep)
-                //Salvar user
-                presenter.insertUser(user, applicationContext)
+                if(isUpdate){
+                    val user = User(this.userToUpdateDelete!!.id, userName, userCep)
+                    Log.i("SAVE","Atualizando user")
+                    presenter.updateUser(user, applicationContext)
+                }else{
+                    val newUser = User(0, userName, userCep)
+                    Log.i("SAVE","Salvando novo user")
+                    presenter.insertUser(newUser, applicationContext)
+                }
                 finish()
-            }else{
+            }
+            else{
                 toast("Complete os campos")
             }
+        }
 
+        btnDelete.setOnClickListener{ view ->
+
+            if(intentFromMain != null) {
+
+                val userToDelete = intentFromMain.extras.get("USER") as User
+
+                //abrir dialog
+                val dialog = AlertDialog.Builder(this@AddUserActivity)
+                dialog.setTitle("Confirmar exclusão")
+                dialog.setMessage("Deseja excluir o usuário: " + userToDelete.name + "?")
+                dialog.setPositiveButton("Sim") { _, _ ->
+                    presenter.deleteUser(userToDelete, applicationContext)
+                    finish()
+                }
+                dialog.setNegativeButton("Não", null)
+                dialog.show()
+            }
+            else{
+                toast("Nenhum usuário selecionado")
+            }
         }
 
         imgSearch.setOnClickListener { view ->
 
             Log.i("CLICK","Search clicado")
-
             closeKeyboard()
-
             val snackbar: Snackbar
-
             if(!editCep.text.toString().equals("")){
                 Log.i("CLICK","CEP: " + editCep.text.toString())
                 snackbar = Snackbar.make(activity_add_user, "Buscando CEP", Snackbar.LENGTH_SHORT)
@@ -66,7 +109,6 @@ class AddUserActivity : AppCompatActivity(), AddUserPresenter.View {
                     Log.i("CLICK",strResult)
                     txtResultado.text = strResult
                 }
-
             }else{
                 Log.i("CLICK","CEP nulo")
                 snackbar = Snackbar.make(activity_add_user, "Campo de CEP deve estar completo", Snackbar.LENGTH_SHORT)

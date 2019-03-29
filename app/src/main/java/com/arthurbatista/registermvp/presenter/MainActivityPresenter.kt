@@ -15,14 +15,14 @@ open class MainActivityPresenter : MainActivityPresenterContract {
 
     var userDao: UserDAO? = null
 
-    var usersList: ArrayList<User> = ArrayList()
-
     override fun openRegister(context: Context){
         val intent = Intent(context, AddUserActivity::class.java)
         startActivity(context,intent,null)
     }
 
     override fun getAllUsers(context: Context) : List<User>? {
+
+        var usersList: ArrayList<User> = ArrayList()
 
         Thread{
             userDatabase = UserDatabase.getInstance(context)
