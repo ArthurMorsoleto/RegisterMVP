@@ -19,7 +19,7 @@ class AddUserActivity : AppCompatActivity(), AddUserPresenter.View {
 
     private val presenter = AddUserPresenter()
 
-    var isUpdate: Boolean = false
+    var isUpdateDelete: Boolean = false
 
     var userToUpdateDelete: User? = null
 
@@ -33,7 +33,7 @@ class AddUserActivity : AppCompatActivity(), AddUserPresenter.View {
 
         if(intentFromMain.hasExtra("USER")){
 
-            isUpdate = true
+            isUpdateDelete = true
 
             btnDelete.isClickable = true
 
@@ -50,7 +50,7 @@ class AddUserActivity : AppCompatActivity(), AddUserPresenter.View {
             val userCep = editCep.text.toString()
 
             if(!userName.equals("") || !userCep.equals("")){
-                if(isUpdate){
+                if(isUpdateDelete){
                     val user = User(this.userToUpdateDelete!!.id, userName, userCep)
                     Log.i("SAVE","Atualizando user")
                     presenter.updateUser(user, applicationContext)
@@ -68,7 +68,7 @@ class AddUserActivity : AppCompatActivity(), AddUserPresenter.View {
 
         btnDelete.setOnClickListener{ view ->
 
-            if(intentFromMain != null) {
+            if(isUpdateDelete) {
 
                 val userToDelete = intentFromMain.extras.get("USER") as User
 
