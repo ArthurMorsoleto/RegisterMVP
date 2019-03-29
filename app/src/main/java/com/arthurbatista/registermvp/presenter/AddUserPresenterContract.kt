@@ -6,8 +6,6 @@ import com.arthurbatista.registermvp.model.user.User
 
 interface AddUserPresenterContract{
 
-    fun insert(user: User)
-
     fun findCEP(cep: String)
 
     fun insertUser(user: User, context: Context)

@@ -42,7 +42,6 @@ open class AddUserPresenter : AddUserPresenterContract{
                             responseCep.uf
                     )
                     cepRetornado = responseCep
-                    return
                 }
             }
 
@@ -55,10 +54,6 @@ open class AddUserPresenter : AddUserPresenterContract{
     var userDao: UserDAO? = null
 
     var userDatabase: UserDatabase? = null
-
-    override fun insert(user: User) {
-        userDao?.insert(user)
-    }
 
     override fun insertUser(user: User, context: Context){
         doAsync {
